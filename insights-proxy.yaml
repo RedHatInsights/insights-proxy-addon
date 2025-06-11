@@ -1,0 +1,81 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: openshift-insights
+  name: insights-proxy
+  labels:
+    app: insights-proxy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: insights-proxy
+  template:
+    metadata:
+      labels:
+        app: insights-proxy
+    spec:
+      initContainers:
+        - name: copy-nginx-data
+          # Due to the way the image is built and Openshift permissions,
+          # the /opt/app-root/nginx/etc/nginx is not writable so we need to mount
+          # an empty path. However, that deletes all the files there, so we need
+          # to first copy them to the empty volume.
+          # This is because the image uses an nginx user (1001) to own the files
+          image: registry.redhat.io/insights-proxy/insights-proxy-container-rhel9:1.5.3
+          command:
+            - /bin/sh
+            - -c
+            - >
+              cp -r /opt/app-root/nginx/* /nginx-data/
+          volumeMounts:
+            - name: nginx-data
+              mountPath: /nginx-data
+      containers:
+        - name: insights-proxy
+          image: registry.redhat.io/insights-proxy/insights-proxy-container-rhel9:1.5.3
+          volumeMounts:
+            - mountPath: /opt/app-root/certs
+              name: certs
+            - mountPath: /opt/app-root/nginx
+              name: nginx-data
+      volumes:
+        - name: certs
+          emptyDir: {}
+        - name: nginx-data
+          emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: openshift-insights
+  name: insights-proxy-service
+  labels:
+    app: insights-proxy
+spec:
+  selector:
+    app: insights-proxy
+  ports:
+    # - name: rhproxy-web-server
+    #   protocol: TCP
+    #   port: 8443
+    #   targetPort: 8443
+    - name: rhproxy-service
+      protocol: TCP
+      port: 3128
+      targetPort: 3128
+---
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: insights-proxy-service
+  namespace: openshift-insights
+spec:
+  to:
+    kind: Service
+    name: insights-proxy-service
+  port:
+    targetPort: 3128
+  tls:
+    termination: passthrough
+  wildcardPolicy: None

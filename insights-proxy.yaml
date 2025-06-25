@@ -1,7 +1,6 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  namespace: openshift-insights
   name: insights-proxy
   labels:
     app: insights-proxy
@@ -39,16 +38,26 @@ spec:
               name: certs
             - mountPath: /opt/app-root/nginx
               name: nginx-data
+            - name: rhproxy-env
+              mountPath: /opt/app-root/rhproxy-env/
+          env:
+            - name: RHPROXY_SERVICE_PORT
+              value: "3128"
       volumes:
         - name: certs
           emptyDir: {}
         - name: nginx-data
           emptyDir: {}
+        - name: rhproxy-env
+          configMap:
+            name: rhproxy-env
+            items:
+            - key: redhat.servers
+              path: redhat.servers
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  namespace: openshift-insights
   name: insights-proxy-service
   labels:
     app: insights-proxy
@@ -56,26 +65,58 @@ spec:
   selector:
     app: insights-proxy
   ports:
+    - name: rhproxy-service
+      protocol: TCP
+      port: 443
+      targetPort: 3128
     # - name: rhproxy-web-server
     #   protocol: TCP
     #   port: 8443
     #   targetPort: 8443
-    - name: rhproxy-service
-      protocol: TCP
-      port: 3128
-      targetPort: 3128
 ---
 apiVersion: route.openshift.io/v1
 kind: Route
 metadata:
+  labels:
+    app: insights-proxy
   name: insights-proxy-service
-  namespace: openshift-insights
 spec:
+  port:
+    targetPort: rhproxy-service
   to:
     kind: Service
     name: insights-proxy-service
-  port:
-    targetPort: 3128
-  tls:
-    termination: passthrough
+    weight: 100
   wildcardPolicy: None
+---
+  apiVersion: v1
+  kind: ConfigMap
+  metadata:
+    name: rhproxy-env
+  data:
+    redhat.servers: |
+      # my custom servers
+      api.openshift.com
+
+      # RedHat Insights Servers
+      api.access.redhat.com
+      cert-api.access.redhat.com
+
+      console.redhat.com
+      cert.console.redhat.com
+
+      cloud.redhat.com
+      cert.cloud.redhat.com
+      connect.cloud.redhat.com
+
+      subscription.rhsm.redhat.com
+      sso.redhat.com
+
+      # Dnf/Yum RedHat Servers
+      cdn.redhat.com
+      mirrors.fedoraproject.org
+      mirrormanager.fedoraproject.org
+      codecs.fedoraproject.org
+
+
+curl --proxy http://insights-proxy-service.insights-proxy.svc:443 https://console.redhat.com/api/insights-results-aggregator/v2/info

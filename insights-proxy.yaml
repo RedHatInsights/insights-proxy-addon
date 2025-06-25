@@ -117,6 +117,3 @@ spec:
       mirrors.fedoraproject.org
       mirrormanager.fedoraproject.org
       codecs.fedoraproject.org
-
-
-curl --proxy http://insights-proxy-service.insights-proxy.svc:443 https://console.redhat.com/api/insights-results-aggregator/v2/info

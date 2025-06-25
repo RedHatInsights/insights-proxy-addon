@@ -29,7 +29,7 @@ The first step is to install the Insights Proxy on the Hub Cluster:
 ```
 oc import-image insights-proxy/insights-proxy-container-rhel9:1.5.3 --from=registry.redhat.io/insights-proxy/insights-proxy-container-rhel9:1.5.3 --confirm
 
-oc apply insights-proxy.yaml
+oc apply -f insights-proxy.yaml
 ```
 
 You can now check the Insights Proxy route:

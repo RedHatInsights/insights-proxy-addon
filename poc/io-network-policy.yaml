@@ -1,0 +1,33 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: restrict-egress
+  namespace: openshift-insights
+spec:
+  podSelector: {}
+  policyTypes:
+    - Egress
+  egress:
+    # Allow all in-cluster service traffic
+    - to:
+        - ipBlock:
+            cidr: 10.217.0.0/16
+    # Allow to the API server endpoint (node IP): oc get endpoints kubernetes -n default
+    - to:
+        - ipBlock:
+            cidr: 192.168.126.11/32
+      ports:
+        - protocol: TCP
+          port: 6443
+    # Allow to the ELB IPs
+    - to:
+        - ipBlock: { cidr: 3.212.39.88/32 }
+        - ipBlock: { cidr: 54.235.186.191/32 }
+        - ipBlock: { cidr: 34.238.109.97/32 }
+        - ipBlock: { cidr: 34.192.149.215/32 }
+        - ipBlock: { cidr: 44.195.213.173/32 }
+      ports:
+        - protocol: TCP
+          port: 80
+        - protocol: TCP
+          port: 443

@@ -62,32 +62,14 @@ metadata:
   labels:
     app: insights-proxy
 spec:
+  type: LoadBalancer
   selector:
     app: insights-proxy
   ports:
     - name: rhproxy-service
       protocol: TCP
-      port: 443
+      port: 80
       targetPort: 3128
-    # - name: rhproxy-web-server
-    #   protocol: TCP
-    #   port: 8443
-    #   targetPort: 8443
----
-apiVersion: route.openshift.io/v1
-kind: Route
-metadata:
-  labels:
-    app: insights-proxy
-  name: insights-proxy-service
-spec:
-  port:
-    targetPort: rhproxy-service
-  to:
-    kind: Service
-    name: insights-proxy-service
-    weight: 100
-  wildcardPolicy: None
 ---
   apiVersion: v1
   kind: ConfigMap

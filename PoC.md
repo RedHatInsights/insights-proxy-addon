@@ -22,6 +22,8 @@ has access to the Hub Cluster.
 - A Hub Cluster with the ACM operator installed
 - A managed cluster (be it local, on AWS, etc.)
 
+All the yaml files are in the `poc` directory.
+
 ### Insights Proxy
 
 The first step is to install the Insights Proxy on the Hub Cluster:

@@ -22,4 +22,4 @@ data:
         endpoint: https://api.openshift.com/api/accounts_mgmt/v1/cluster_transfers/
         interval: 0h1m0s
     proxy:
-        httpsProxy: CHANGEME
+        httpsProxy: http://ad2f2703e38c64ddf933371a8885293b-1014996582.us-east-1.elb.amazonaws.com:80

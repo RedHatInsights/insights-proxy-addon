@@ -1,0 +1,111 @@
+apiVersion: addon.open-cluster-management.io/v1alpha1
+kind: AddOnTemplate
+metadata:
+  name: insights-proxy
+spec:
+  addonName: insights-proxy
+  registration: # TODO: Do we need to set anything here?
+  agentSpec:
+    workload:
+      manifests:
+        - apiVersion: v1
+          kind: ConfigMap
+          metadata:
+            name: insights-proxy-config
+            namespace: openshift-insights
+          data:
+            HTTPS_PROXY: "http://{{ .proxyHost }}:3128"  # TODO: How can we pass this dynamically?
+        - apiVersion: apps/v1
+          kind: Deployment
+          metadata:
+            name: insights-proxy
+            labels:
+              app: insights-proxy
+          spec:
+            replicas: 1
+            selector:
+              matchLabels:
+                app: insights-proxy
+            template:
+              metadata:
+                labels:
+                  app: insights-proxy
+              spec:
+                initContainers:
+                  - name: copy-nginx-data
+                    image: registry.redhat.io/insights-proxy/insights-proxy-container-rhel9:1.5.3
+                    command:
+                      - /bin/sh
+                      - -c
+                      - >
+                        cp -r /opt/app-root/nginx/* /nginx-data/
+                    volumeMounts:
+                      - name: nginx-data
+                        mountPath: /nginx-data
+                containers:
+                  - name: insights-proxy
+                    image: registry.redhat.io/insights-proxy/insights-proxy-container-rhel9:1.5.3
+                    volumeMounts:
+                      - mountPath: /opt/app-root/certs
+                        name: certs
+                      - mountPath: /opt/app-root/nginx
+                        name: nginx-data
+                      - name: rhproxy-env
+                        mountPath: /opt/app-root/rhproxy-env/
+                    env:
+                      - name: RHPROXY_SERVICE_PORT
+                        value: "3128"
+                volumes:
+                  - name: certs
+                    emptyDir: {}
+                  - name: nginx-data
+                    emptyDir: {}
+                  - name: rhproxy-env
+                    configMap:
+                      name: rhproxy-env
+                      items:
+                      - key: redhat.servers
+                        path: redhat.servers
+        - apiVersion: v1
+          kind: Service
+          metadata:
+            name: insights-proxy-service
+            labels:
+              app: insights-proxy
+          spec:
+            type: LoadBalancer
+            selector:
+              app: insights-proxy
+            ports:
+              - name: rhproxy-service
+                protocol: TCP
+                port: 80
+                targetPort: 3128
+        - apiVersion: v1
+          kind: ConfigMap
+          metadata:
+            name: rhproxy-env
+          data:
+            redhat.servers: |
+              # my custom servers
+              api.openshift.com
+
+              # RedHat Insights Servers
+              api.access.redhat.com
+              cert-api.access.redhat.com
+
+              console.redhat.com
+              cert.console.redhat.com
+
+              cloud.redhat.com
+              cert.cloud.redhat.com
+              connect.cloud.redhat.com
+
+              subscription.rhsm.redhat.com
+              sso.redhat.com
+
+              # Dnf/Yum RedHat Servers
+              cdn.redhat.com
+              mirrors.fedoraproject.org
+              mirrormanager.fedoraproject.org
+              codecs.fedoraproject.org

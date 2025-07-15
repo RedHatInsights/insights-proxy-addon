@@ -18,3 +18,7 @@ spec:
     placements:
     - name: openshift-insights-proxy
       namespace: insights-proxy
+      configs:
+      - group: addon.open-cluster-management.io
+        resource: addontemplates
+        name: insights-proxy

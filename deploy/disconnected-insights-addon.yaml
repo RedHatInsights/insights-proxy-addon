@@ -23,3 +23,7 @@ spec:
     placements:
     - name: openshift-disconnected-insights
       namespace: insights-proxy
+      configs:
+      - group: addon.open-cluster-management.io
+        resource: addontemplates
+        name: disconnected-insights

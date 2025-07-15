@@ -8,13 +8,6 @@ spec:
   agentSpec:
     workload:
       manifests:
-        - apiVersion: v1
-          kind: ConfigMap
-          metadata:
-            name: insights-proxy-config
-            namespace: openshift-insights
-          data:
-            HTTPS_PROXY: "http://{{ .proxyHost }}:3128"  # TODO: How can we pass this dynamically?
         - apiVersion: apps/v1
           kind: Deployment
           metadata:

@@ -1,20 +1,20 @@
 apiVersion: addon.open-cluster-management.io/v1alpha1
 kind: ClusterManagementAddOn
 metadata:
-  name: insights-proxy
+  name: disconnected-insights
   annotations:
     addon.open-cluster-management.io/lifecycle: "addon-manager"
 spec:
   addOnMeta:
-    description: Deploys the Insights Proxy on the hub cluster
-    displayName: Insights Proxy
+    description: Configure the Insights Operator on a disconnected cluster to use the Insights Proxy
+    displayName: Disconnected Insights
   supportedConfigs:
     - group: addon.open-cluster-management.io
       resource: addontemplates
       defaultConfig:
-        name: insights-proxy
+        name: disconnected-insights
   installStrategy:
     type: Placements
     placements:
-    - name: openshift-insights-proxy
+    - name: openshift-disconnected-insights
       namespace: open-cluster-management

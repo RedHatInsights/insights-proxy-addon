@@ -1,0 +1,30 @@
+apiVersion: addon.open-cluster-management.io/v1alpha1
+kind: AddOnTemplate
+metadata:
+  name: disconnected-insights
+spec:
+  addonName: disconnected-insights
+  registration:
+  agentSpec:
+    workload:
+      manifests:
+        - apiVersion: v1
+          kind: ConfigMap
+          metadata:
+            name: insights-config
+            namespace: openshift-insights
+          data:
+            # There isn't dynamic population, we would have to do it as part of the install of the yaml or you would need to build a controller to do it
+            HTTPS_PROXY: {{INSIGHTS_PROXY_URL}}
+            # TODO: This config map overrides the one in the cluster, so if the user has already set it, it will be overridden
+---
+apiVersion: addon.open-cluster-management.io/v1alpha1
+kind: AddOnDeploymentConfig
+metadata:
+  name: disconnected-insights-config  # TODO: is this name ok?
+  namespace: open-cluster-management-hub
+spec:
+  customizedVariables:
+  - name: INSIGHTS_PROXY_URL
+    # Replace with yours
+    value: http://ad2f2703e38c64ddf933371a8885293b-1014996582.us-east-1.elb.amazonaws.com:80

@@ -17,9 +17,9 @@ spec:
       resource: addondeploymentconfigs
       defaultConfig:
         name: disconnected-insights-config
-        namespace: open-cluster-management
+        namespace: openshift-insights
   installStrategy:
     type: Placements
     placements:
     - name: openshift-disconnected-insights
-      namespace: open-cluster-management
+      namespace: insights-proxy

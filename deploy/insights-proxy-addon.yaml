@@ -17,4 +17,4 @@ spec:
     type: Placements
     placements:
     - name: openshift-insights-proxy
-      namespace: open-cluster-management
+      namespace: insights-proxy

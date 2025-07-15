@@ -39,8 +39,8 @@ spec:
 apiVersion: addon.open-cluster-management.io/v1alpha1
 kind: AddOnDeploymentConfig
 metadata:
-  name: disconnected-insights-config  # TODO: is this name ok?
-  namespace: open-cluster-management-hub
+  name: disconnected-insights-config
+  namespace: openshift-insights
 spec:
   customizedVariables:
   - name: INSIGHTS_PROXY_URL

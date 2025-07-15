@@ -17,7 +17,7 @@ spec:
     type: Placements
     placements:
     - name: openshift-insights-proxy
-      namespace: insights-proxy
+      namespace: open-cluster-management-global
       configs:
       - group: addon.open-cluster-management.io
         resource: addontemplates

@@ -8,6 +8,30 @@ spec:
   agentSpec:
     workload:
       manifests:
+        - apiVersion: apps/v1
+        # TODO: placeholder needed for reporting a status for the addon
+          kind: Deployment
+          metadata:
+            name: hello-world-server
+            namespace: openshift-insights
+            labels:
+              app: hello-world
+          spec:
+            replicas: 1
+            selector:
+              matchLabels:
+                app: hello-world
+            template:
+              metadata:
+                labels:
+                  app: hello-world
+              spec:
+                containers:
+                  - name: hello-world
+                    image: python:3.9-slim
+                    command: ["python", "-m", "http.server", "8080"]
+                    ports:
+                      - containerPort: 8080
         - apiVersion: v1
           kind: ConfigMap
           metadata:

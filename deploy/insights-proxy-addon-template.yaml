@@ -8,10 +8,15 @@ spec:
   agentSpec:
     workload:
       manifests:
+        - apiVersion: v1
+          kind: Namespace
+          metadata:
+            name: insights-proxy
         - apiVersion: apps/v1
           kind: Deployment
           metadata:
             name: insights-proxy
+            namespace: insights-proxy
             labels:
               app: insights-proxy
           spec:
@@ -63,6 +68,7 @@ spec:
           kind: Service
           metadata:
             name: insights-proxy-service
+            namespace: insights-proxy
             labels:
               app: insights-proxy
           spec:
@@ -78,6 +84,7 @@ spec:
           kind: ConfigMap
           metadata:
             name: rhproxy-env
+            namespace: insights-proxy
           data:
             redhat.servers: |
               # my custom servers

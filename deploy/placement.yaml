@@ -2,7 +2,7 @@ apiVersion: cluster.open-cluster-management.io/v1beta1
 kind: Placement
 metadata:
   name: openshift-insights-proxy
-  namespace: open-cluster-management-global
+  namespace: default
 spec:
   predicates:
     - requiredClusterSelector:
@@ -18,7 +18,7 @@ apiVersion: cluster.open-cluster-management.io/v1beta1
 kind: Placement
 metadata:
   name: openshift-disconnected-insights
-  namespace: open-cluster-management-global
+  namespace: default
 spec:
   predicates:
     - requiredClusterSelector:

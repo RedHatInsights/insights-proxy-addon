@@ -66,6 +66,7 @@ metadata:
   name: disconnected-insights-config
   namespace: openshift-insights
 spec:
+  agentInstallNamespace: openshift-insights
   customizedVariables:
   - name: INSIGHTS_PROXY_URL
     # Replace with yours

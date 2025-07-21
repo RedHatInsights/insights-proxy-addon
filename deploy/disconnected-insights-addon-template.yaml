@@ -69,4 +69,4 @@ spec:
   customizedVariables:
   - name: INSIGHTS_PROXY_URL
     # Replace with yours
-    value: http://ad2f2703e38c64ddf933371a8885293b-1014996582.us-east-1.elb.amazonaws.com:80
+    value: http://a6908720f91874968918d7f8314ea645-2057002690.us-west-2.elb.amazonaws.com:80

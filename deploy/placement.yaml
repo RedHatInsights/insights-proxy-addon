@@ -2,7 +2,7 @@ apiVersion: cluster.open-cluster-management.io/v1beta1
 kind: Placement
 metadata:
   name: openshift-insights-proxy
-  namespace: default
+  namespace: open-cluster-management-global-set
 spec:
   predicates:
     - requiredClusterSelector:
@@ -10,15 +10,11 @@ spec:
           matchLabels:
             local-cluster: "true" # Deploy only in the hub cluster
 ---
-# This would deploy the resources only if the cluster has the ClusterClaim set to true:
-# ❯ oc get ClusterClaims/should-use-insights-proxy
-# NAME                        AGE
-# should-use-insights-proxy   3h8m
 apiVersion: cluster.open-cluster-management.io/v1beta1
 kind: Placement
 metadata:
   name: openshift-disconnected-insights
-  namespace: default
+  namespace: open-cluster-management-global-set
 spec:
   predicates:
     - requiredClusterSelector:

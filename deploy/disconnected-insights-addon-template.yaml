@@ -60,6 +60,69 @@ spec:
                   httpsProxy: {{INSIGHTS_PROXY_URL}}
             # TODO: There isn't dynamic population, we would have to do it as part of the install of the yaml or you would need to build a controller to do it
 ---
+apiVersion: policy.open-cluster-management.io/v1
+kind: Policy
+metadata:
+  name: insights-proxy-url-updater
+  namespace: openshift-insights
+spec:
+  remediationAction: enforce
+  disabled: false
+  policy-templates:
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: insights-proxy-url-config
+        spec:
+          remediationAction: enforce
+          severity: medium
+          object-templates:
+            - complianceType: mustHave
+              objectDefinition:
+                apiVersion: addon.open-cluster-management.io/v1alpha1
+                kind: AddOnDeploymentConfig
+                metadata:
+                  name: disconnected-insights-config
+                  namespace: openshift-insights
+                spec:
+                  agentInstallNamespace: openshift-insights
+                  customizedVariables:
+                  - name: INSIGHTS_PROXY_URL
+                    value: 'http://{{ (lookup "v1" "Service" "insights-proxy" "insights-proxy-service").status.loadBalancer.ingress[0].hostname }}:80'
+    # - objectDefinition:
+    #     # TODO: check if this is needed or the IO automatically uses the latest version of the configMap
+    #     apiVersion: policy.open-cluster-management.io/v1
+    #     kind: ConfigurationPolicy
+    #     metadata:
+    #       name: insights-operator-restart
+    #     spec:
+    #       remediationAction: enforce
+    #       severity: low
+    #       object-templates:
+    #         - complianceType: mustHave
+    #           objectDefinition:
+    #             apiVersion: v1
+    #             kind: Pod
+    #             metadata:
+    #               name: insights-operator-restart-{{ fromClusterClaim "id.openshift.io" }}-{{ (lookup "v1" "Service" "insights-proxy" "insights-proxy-service").metadata.resourceVersion }}
+    #               namespace: openshift-insights
+    #               labels:
+    #                 app: insights-operator-restart
+    #             spec:
+    #               restartPolicy: Never
+    #               serviceAccountName: insights-operator
+    #               containers:
+    #               - name: restart-insights-operator
+    #                 image: registry.redhat.io/ubi8/ubi-minimal:latest
+    #                 command:
+    #                 - /bin/sh
+    #                 - -c
+    #                 - |
+    #                   oc delete pod -n openshift-insights -l name=insights-operator --force --grace-period=0 || true
+    #                   sleep 5
+    #                   echo "Insights Operator restart initiated"
+---
 apiVersion: addon.open-cluster-management.io/v1alpha1
 kind: AddOnDeploymentConfig
 metadata:
@@ -69,5 +132,5 @@ spec:
   agentInstallNamespace: openshift-insights
   customizedVariables:
   - name: INSIGHTS_PROXY_URL
-    # Replace with yours
-    value: http://a9e2199d343e54d06974a3da8f6fbf69-2027939752.us-west-2.elb.amazonaws.com:80
+    # This will be automatically updated by the ACM Policy above
+    value: ""

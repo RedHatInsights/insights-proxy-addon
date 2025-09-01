@@ -26,11 +26,12 @@ apiVersion: policy.open-cluster-management.io/v1
 kind: PlacementBinding
 metadata:
   name: binding-insights-proxy-url-updater
-  namespace: open-cluster-management-global-set
+  namespace: insights-proxy
 placementRef:
   apiGroup: cluster.open-cluster-management.io
   kind: Placement
   name: openshift-disconnected-insights
+  namespace: open-cluster-management-global-set
 subjects:
   - apiGroup: policy.open-cluster-management.io
     kind: Policy

@@ -3,7 +3,7 @@ apiVersion: policy.open-cluster-management.io/v1
 kind: Policy
 metadata:
   name: insights-proxy-url-updater
-  namespace: open-cluster-management-global-set
+  namespace: insights-proxy
 spec:
   remediationAction: enforce
   disabled: false

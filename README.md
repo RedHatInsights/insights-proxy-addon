@@ -19,9 +19,8 @@ Be careful because this will reset the capabilities to the ones specified in the
 oc import-image insights-proxy/insights-proxy-container-rhel9:1.5.3 --from=registry.redhat.io/insights-proxy/insights-proxy-container-rhel9:1.5.3 --confirm
 oc apply -f deploy # TODO: I did apply, but I need to try with create
 ```
-1. Ensure the `INSIGHTS_PROXY_URL` in [disconnected-insights-addon-template.yaml](deploy/disconnected-insights-addon-template.yaml) variable was correctly imported in the ConfigMap.
-   1. Access the managed cluster and check the `insights-config` ConfigMap in the `openshift-insights` namespace.
-2. Check the Insights Operator logs in the managed cluster to see if the configuration `insights-config` was created successfully in the `openshift-insights` namespace. Then check the `insights-operator` pod logs to see if the configuration was applied. Otherwise, delete the pod and force a configuration reload (although it should be automatic).
+8. Ensure the Insights Proxy URL in [insights-proxy-url-updater.yaml](deploy/insights-proxy-url-updater.yaml) variable was correctly used in the ConfigMap: access the managed cluster and check the `insights-config` ConfigMap in the `openshift-insights` namespace.
+9.  Check the Insights Operator logs in the managed cluster to see if the configuration `insights-config` was created successfully in the `openshift-insights` namespace. Then check the `insights-operator` pod logs to see if the configuration was applied. Otherwise, delete the pod and force a configuration reload (although it should be automatic).
 
 ## Uninstall the addon
 

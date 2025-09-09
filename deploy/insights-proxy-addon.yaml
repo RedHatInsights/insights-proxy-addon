@@ -17,18 +17,10 @@ spec:
     type: Placements
     placements:
     - name: openshift-insights-proxy
-      namespace: open-cluster-management-global-set
+      namespace: insights-proxy
       configs:
       - group: addon.open-cluster-management.io
         resource: addontemplates
         name: insights-proxy
     - name: openshift-disconnected-insights
-      namespace: open-cluster-management-global-set
-      configs:
-      - group: addon.open-cluster-management.io
-        resource: addontemplates
-        name: disconnected-insights
-      - group: addon.open-cluster-management.io
-        resource: addondeploymentconfigs
-        name: disconnected-insights-config
-        namespace: openshift-insights
+      namespace: insights-proxy

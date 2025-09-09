@@ -2,7 +2,7 @@ apiVersion: cluster.open-cluster-management.io/v1beta1
 kind: Placement
 metadata:
   name: openshift-insights-proxy
-  namespace: open-cluster-management-global-set
+  namespace: insights-proxy
 spec:
   predicates:
     - requiredClusterSelector:
@@ -14,10 +14,25 @@ apiVersion: cluster.open-cluster-management.io/v1beta1
 kind: Placement
 metadata:
   name: openshift-disconnected-insights
-  namespace: open-cluster-management-global-set
+  namespace: insights-proxy
 spec:
   predicates:
     - requiredClusterSelector:
         labelSelector:
           matchLabels:
             should-use-insights-proxy: "true"
+---
+apiVersion: policy.open-cluster-management.io/v1
+kind: PlacementBinding
+metadata:
+  name: binding-insights-proxy-url-updater
+  namespace: insights-proxy
+placementRef:
+  apiGroup: cluster.open-cluster-management.io
+  kind: Placement
+  name: openshift-disconnected-insights
+  namespace: insights-proxy
+subjects:
+  - apiGroup: policy.open-cluster-management.io
+    kind: Policy
+    name: insights-proxy-url-updater

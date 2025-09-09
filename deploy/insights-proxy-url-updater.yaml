@@ -17,7 +17,7 @@ spec:
           remediationAction: enforce
           severity: medium
           object-templates:
-            - complianceType: mustHave
+            - complianceType: MustHave
               objectDefinition:
                 apiVersion: v1
                 kind: ConfigMap
